@@ -4,11 +4,7 @@ let commic = new Schema({
     url:String,
     name:String ,
     alternative:String,
-    authors:[
-        {
-            type:String
-        }
-    ],
+    authors:String,
     image:{
         type:String
     },
@@ -33,4 +29,4 @@ let commic = new Schema({
 },
 {timestamps:true}
 )
-module.exports = mongoose.model("commic",commic);
+module.exports = mongoose.model("comic",commic);
