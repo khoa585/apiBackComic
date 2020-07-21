@@ -8,7 +8,7 @@ let commic = new Schema({
     image:{
         type:String
     },
-    status:String,
+    status:Number,
     views:Number,
     genres:[
         {

@@ -16,6 +16,7 @@ let queue  = kue.createQueue({
         }
     },
 });
+queue.setMaxListeners(1000)
 mongoose.connect(`mongodb://${process.env.MONGO_SERVER}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`, {useNewUrlParser: true,useUnifiedTopology: true ,useCreateIndex: true},(error)=>{
 if(error){
     console.log(error);
@@ -31,7 +32,7 @@ if(error){
 //         else console.log(error);
 //     });
 // }
-// queue.process("getLinkCommic",2,function(job,done){
+// queue.process("getLinkCommic",8,function(job,done){
 //     getListInLink(job.data).then((data)=>{
 //         console.log("page "+job.data+ " : "+ data);
 //         done()
@@ -39,27 +40,27 @@ if(error){
 //     .catch(error=>{
 //         console.log(error);
 //     })
-//})
-// END  Get ALL Link In Chapter
-
-//getDetialComic("http://www.nettruyen.com/truyen-tranh/boys-run-the-riot-27279","5f15a3c3549b1a47941aa4c6");
-// GET ALL CHAPTER IN COMMIC
-// listCommitNotUpdate().then(data=>{
-//     data.forEach((item)=>{
-//         let job = queue.create("getChapterComic",{url:item.url,id:item._id}).attempts(3).save(function(error) {
-//             if (!error) console.log(job.id);
-//             else console.log(error);
-//         });
-//     })
 // })
-queue.process("getChapterComic",2, function(job,done){
-    getDetialComic(job.data.url,job.data.id).then((number)=>{
-        console.log(job.data.url + " : " + number);
+// END  Get ALL Link In Chapter
+// GET ALL CHAPTER IN COMMIC
+listCommitNotUpdate().then(data=>{
+    data.forEach((item)=>{
+        let job = queue.create("getChapterComic",{url:item.url,id:item._id}).attempts(3).save(function(error) {
+            if (!error) console.log(job.id);
+            else console.log(error);
+        });
+        
+    })
+})
+queue.process("getChapterComic",6, function(job,done){
+    getDetialComic(job.data.url,job.data.id).then((data)=>{
+        console.log(job.data.url + " : So Page " + data.total + "  List :" + data.update);
         done()
     }).catch(error=>{
         console.log(error);
     })
 })
-    
-
 // END GET ALL CHAPTER IN COMMIC
+
+
+kue.app.listen(4000);

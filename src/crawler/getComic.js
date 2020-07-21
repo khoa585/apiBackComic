@@ -31,7 +31,10 @@ const getDetialComic =  async (url,commicId)=>{
     let objects ={};
     objects["name"]= $("#item-detail > h1").text();
     objects["author"]=$("#item-detail > div.detail-info > div > div.col-xs-8.col-info > ul > li.author.row > p.col-xs-8").text();
-    objects["status"]=$("#item-detail > div.detail-info > div > div.col-xs-8.col-info > ul > li.status.row > p.col-xs-8").text();
+    let status = $("#item-detail > div.detail-info > div > div.col-xs-8.col-info > ul > li.status.row > p.col-xs-8").text();
+    if(status=="Đang tiến hành"){
+        objects["status"]=0;
+    }else {objects["status"]=1; }
     objects["image"]= $("#item-detail > div.detail-info > div > div.col-xs-4.col-image > img").attr("src");
     let genders = $("#item-detail > div.detail-info > div > div.col-xs-8.col-info > ul > li.kind.row > p.col-xs-8>a");
 
@@ -40,8 +43,8 @@ const getDetialComic =  async (url,commicId)=>{
     })
     objects["genres"]= listGenders ;
     objects["description"]=$("#item-detail > div.detail-content > p").text();
-    console.log(objects);
-    let chapterSelect = $("#nt_listchapter > nav > ul>li");
+    // console.log(objects);
+    let chapterSelect = $("#nt_listchapter > nav > ul>li:not(:first-child)");
     chapterSelect.each(function(i,element){
         let object = {};
         let elementDetial = cheerio.load(element) ;
@@ -53,12 +56,12 @@ const getDetialComic =  async (url,commicId)=>{
         }
     })
     
-    listchapter = listChapter.reverse();
-    console.log(listChapter);
+    listChapter = listChapter.reverse();
+    // console.log(listChapter);
     await commicDb.updateOne({_id:commicId},objects);
-    let listPromise = listchapter.map((item,index)=>AddChapter(item.url,item.name,item.views,index+1,commicId));
+    let listPromise = listChapter.map((item,index)=>AddChapter(item.url,item.name,item.views,index+1,commicId));
     let dataResult = await Promise.all(listPromise);
-    return dataResult.length ;
+    return {total:listChapter.length,update:dataResult.length} ;
 }
 const addCommic = (Link)=>{
     return commicDb.create({url:Link});
@@ -74,7 +77,7 @@ const listCommitNotUpdate= ()=>{
             }
         ]
 
-    }).limit(10000);
+    })
 }
 const AddChapter = async(url,name,views,index,comic_id)=>{
     let chapterCreate = await chapterDb.create({
@@ -89,6 +92,7 @@ const AddChapter = async(url,name,views,index,comic_id)=>{
             "chapters": chapterCreate._id
         }
     })
+    return url ;
 }
 module.exports = {
     getListInLink,

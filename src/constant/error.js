@@ -1,0 +1,5 @@
+export const ERROR_AUTHEN ='ERROR_AUTHEN';
+export const AUTHEN_FAIL = 'AUTHEN_FAIL';
+export const FAIL_VALIDATION = 'FAIL_VALIDATION';
+export const MANGA_NOT_FOUND = 'MANGA_NOT_FOUND';
+export const CHAPTER_NOT_FOUND = "CHAPTER_NOT_FOUND";

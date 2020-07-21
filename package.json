@@ -2,7 +2,8 @@
   "scripts": {
     "dev": "nodemon --exec babel-node src/server.js",
     "start": "babel-node src/server.js",
-    "crawler":"babel-node src/crawler/index.js"
+    "crawler":"babel-node src/crawler/index.js",
+    "cronjob":"babel-node src/crawler/cronjob.js"
   },
   "name": "commicapi",
   "version": "1.0.0",
