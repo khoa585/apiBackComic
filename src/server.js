@@ -6,7 +6,7 @@ import  responseTime from 'response-time';
 import  logger from 'morgan';
 import  mongoose from 'mongoose';
 import router from './server/index';
-import {responsHelper} from './common/responsiveHelper';
+import {responseHelper} from './common/responsiveHelper';
 import authentication from './common/authentication';
 import {FAIL_VALIDATION} from './constant/error';
 if(process.env.DEV=="development"){
@@ -42,7 +42,7 @@ app.use("/",router);
 app.use(function(err,req,res,next){
     if (err.message == 'validation error') {
         // ResponseHelper.json(req,res,err.errors,null);
-        responsHelper(req, res,{
+        responseHelper(req, res,{
             ms:FAIL_VALIDATION,
             detail:err.errors
         }, null);

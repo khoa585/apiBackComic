@@ -20,7 +20,7 @@ export const getListComics = async (type, page, numberItem) => {
       .sort({ views: -1 })
       .skip((page - 1) * numberItem)
       .limit(numberItem)
-      .populate("chapters", ["name", "updatedAt"]);
+      .populate("chapters", ["name", "updatedAt","views"]);
   } else {
     result = await ComicDb.find({
       enable: true,
@@ -28,17 +28,11 @@ export const getListComics = async (type, page, numberItem) => {
       .sort({ updatedAt: -1 })
       .skip((page - 1) * numberItem)
       .limit(numberItem)
-      .populate("chapters", ["name", "updatedAt"]);
+      .populate("chapters", ["name", "updatedAt","views"]);
   }
-
   let total = await ComicDb.countDocuments();
   let data = result.map((item) => {
     item.chapters = item.chapters.reverse().slice(0, 3);
-    item = {
-      name: item.name,
-      chapters: item.chapters,
-      image: item.image,
-    }
     return item;
   });
   
