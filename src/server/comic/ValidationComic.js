@@ -7,13 +7,21 @@ export const VALIDATION_GET_LIST_COMIC = {
     numberitem: Joi.number(),
   },
 };
+// export const VALIDATION_SEARCH_COMIC = {
+//   options: { allowUnknownBody: false },
+//   body: {
+//     query: Joi.string().required(),
+//     page: Joi.number().required(),
+//     numberitem: Joi.number(),
+//   },
+// };
 export const VALIDATION_SEARCH_COMIC = {
   options: { allowUnknownBody: false },
   body: {
-    title: Joi.string(),
-    category: Joi.string(),
-    page: Joi.string().required(),
-    numberItem: Joi.number(),
+    name: Joi.string(),
+    authors: Joi.string(),
+    page: Joi.number().required(),
+    numberitem: Joi.number(),
   },
 };
 export const VALIDATION_HIDDEN_COMIC = {

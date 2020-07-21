@@ -1,12 +1,15 @@
 import express from "express";
-import { getComicById, getListComics } from "./ModelComic";
+import { getComicById, getListComics, searchListComics } from "./ModelComic";
 import validator from "express-validation";
-import { VALIDATION_GET_LIST_COMIC } from "./ValidationComic";
+import {
+  VALIDATION_GET_LIST_COMIC,
+  VALIDATION_SEARCH_COMIC,
+} from "./ValidationComic";
 import { responseHelper } from "../../common/responsiveHelper";
 
 const router = express.Router();
 const NUMBER_LIMIT = 10;
-router.get("/:comicId", async (req, res) => {
+router.get("/detail/:comicId", async (req, res) => {
   try {
     const { comicId } = req.params;
     const comic = await getComicById(comicId);
@@ -27,11 +30,32 @@ router.post("/list", validator(VALIDATION_GET_LIST_COMIC), async (req, res) => {
   }
 });
 
-// router.post("/search", async (req, res) => {
-//   try {
-//     let {title, caterogy, page, number}
-//   } catch (error) {
-//     responseHelper(req, res, error);
-//   }
-// });
+router.post("/search", validator(VALIDATION_SEARCH_COMIC), async (req, res) => {
+  try {
+    /**
+     * @DES Search with name or authors
+     */
+    const { name, authors, page, numberitem } = req.body;
+    const numberLimit = numberitem || NUMBER_LIMIT;
+    const { comics, total } = await searchListComics(
+      name,
+      authors,
+      page,
+      numberLimit
+    );
+    return responseHelper(req, res, null, comics, total);
+
+    /**
+     * @DES Search with query string with 2 fields name and authors
+     */
+
+    // const { query, page, numberitem } = req.body;
+    // const numberLimit = numberitem || NUMBER_LIMIT;
+
+    // const { comics, total } = await searchListComics(query, page, numberLimit);
+    // return responseHelper(req, res, null, comics, total);
+  } catch (error) {
+    return responseHelper(req, res, error);
+  }
+});
 export default router;
