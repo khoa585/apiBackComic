@@ -9,6 +9,17 @@ import router from './server/index';
 import {responsHelper} from './common/responsiveHelper';
 import authentication from './common/authentication';
 import {FAIL_VALIDATION} from './constant/error';
+if(process.env.DEV=="development"){
+    mongoose.connect(process.env.MONGO_URL, {useNewUrlParser: true,useUnifiedTopology: true ,useCreateIndex: true},(error)=>{
+    if(error){
+        console.log(error);
+        console.log('Thất Bại');
+    }else {
+        console.log('Connect successed to mongo');
+    }
+    });
+}
+else {
 mongoose.connect(`mongodb://${process.env.MONGO_SERVER}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`, {useNewUrlParser: true,useUnifiedTopology: true ,useCreateIndex: true},(error)=>{
 if(error){
     console.log(error);
@@ -17,6 +28,8 @@ if(error){
     console.log('Connect successed to mongo');
 }
 });
+}
+
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
