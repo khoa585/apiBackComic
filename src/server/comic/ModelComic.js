@@ -37,7 +37,6 @@ export const getListComics = async (type, page, numberItem) => {
     item.chapters = item.chapters.reverse().slice(0, 3);
     return item;
   });
-  console.log(count);
   putData(key, data);
   return { data, total: count };
 };

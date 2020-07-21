@@ -16,11 +16,11 @@ router.get("/:comicId", async (req, res) => {
 router.post("/list", validator(VALIDATION_GET_LIST_COMIC), async (req, res) => {
   const { type, page, numberItem } = req.body;
   const numberLimit = numberItem || NUMBER_LIMIT;
-  const comics = await getListComics(type, page, numberLimit);
+  const {data, total} = await getListComics(type, page, numberLimit);
   return res.status(200).json({
     message: "success",
-    count: comics.length,
-    data: comics,
+    total,
+    data,
   });
 });
 export default router;
