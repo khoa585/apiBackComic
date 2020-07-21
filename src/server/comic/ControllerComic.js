@@ -2,7 +2,7 @@ import express from "express";
 import { getComicById, getListComics } from "./ModelComic";
 import validator from "express-validation";
 import { VALIDATION_GET_LIST_COMIC } from "./ValidationComic";
-import { responsHelper } from "../../common/responsiveHelper";
+import { responsesHelper } from "../../common/responsiveHelper";
 
 const router = express.Router();
 const NUMBER_LIMIT = 10;
@@ -27,7 +27,11 @@ router.post("/list", validator(VALIDATION_GET_LIST_COMIC), async (req, res) => {
   }
 });
 
-router.get("/search", async (req, res) => {
-  const q = req.query.name;
+router.post("/search", async (req, res) => {
+  try {
+    let {title, cate}
+  } catch (error) {
+    responsesHelper(req, res, error);
+  }
 });
 export default router;

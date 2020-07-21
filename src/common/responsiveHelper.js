@@ -1,4 +1,4 @@
-export const responsHelper = (req,res,error,data=null,numberOfResult=null)=>{
+export const responseHelper = (req,res,error,data=null,numberOfResult=null)=>{
     if (error){
         return res.json({status:error})
     }
