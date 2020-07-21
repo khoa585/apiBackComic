@@ -10,7 +10,7 @@ router.get("/:comicId", async (req, res) => {
   try {
     const { comicId } = req.params;
     const comic = await getComicById(comicId);
-    return responseHelper(req, res, null, { comic });
+    return responseHelper(req, res, null, comic);
   } catch (error) {
     return responseHelper(req, res, error);
   }
@@ -18,10 +18,10 @@ router.get("/:comicId", async (req, res) => {
 
 router.post("/list", validator(VALIDATION_GET_LIST_COMIC), async (req, res) => {
   try {
-    const { type, page, numberItem } = req.body;
-    const numberLimit = numberItem || NUMBER_LIMIT;
+    const { type, page, numberitem } = req.body;
+    const numberLimit = numberitem || NUMBER_LIMIT;
     const { data, total } = await getListComics(type, page, numberLimit);
-    return responseHelper(req, res, null, { data, total });
+    return responseHelper(req, res, null, data, total);
   } catch (error) {
     return responseHelper(req, res, error);
   }

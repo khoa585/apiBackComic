@@ -7,7 +7,7 @@ export const getComicById = async (comicId) => {
 
 export const getListComics = async (type, page, numberItem) => {
   let result;
-  let count;
+
   let key = `${type}-${page}-${numberItem}`;
   let valueCache = getData(key);
   if (valueCache) {
@@ -20,8 +20,7 @@ export const getListComics = async (type, page, numberItem) => {
       .sort({ views: -1 })
       .skip((page - 1) * numberItem)
       .limit(numberItem)
-      .populate("chapters");
-    count = await ComicDb.countDocuments();
+      .populate("chapters", "name");
   } else {
     result = await ComicDb.find({
       enable: true,
@@ -29,14 +28,14 @@ export const getListComics = async (type, page, numberItem) => {
       .sort({ updatedAt: -1 })
       .skip((page - 1) * numberItem)
       .limit(numberItem)
-      .populate("chapters");
-    count = await ComicDb.countDocuments();
+      .populate("chapters", "name");
   }
-
-  const data = result.map((item) => {
+  
+  let total = await ComicDb.countDocuments();
+  let data = result.map((item) => {
     item.chapters = item.chapters.reverse().slice(0, 3);
     return item;
   });
-  putData(key, data);
-  return { data, total: count };
+  putData(key, { data, total });
+  return { data, total };
 };

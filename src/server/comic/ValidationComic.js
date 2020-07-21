@@ -4,7 +4,7 @@ export const VALIDATION_GET_LIST_COMIC = {
   body: {
     page: Joi.number().required(),
     type: Joi.number().required(),
-    numberItem: Joi.number(),
+    numberitem: Joi.number(),
   },
 };
 export const VALIDATION_SEARCH_COMIC = {
