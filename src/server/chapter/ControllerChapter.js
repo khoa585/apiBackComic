@@ -4,7 +4,7 @@ import { responseHelper } from "../../common/responsiveHelper";
 
 const router = express.Router();
 
-router.get("/:chapterId", async (req, res) => {
+router.get("/detail/:chapterId", async (req, res) => {
   try {
     const chapter = await getChapterByID(req.params.chapterId);
     return responseHelper(req, res, null, chapter);
