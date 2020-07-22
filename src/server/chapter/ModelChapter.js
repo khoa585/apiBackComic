@@ -1,7 +1,9 @@
 import request from "request-promise";
 import cheerio from "cheerio";
 
-import { Chapter } from "../../model/chapter";
+const Chapter =  require("../../model/chapter");
+const ComicDb =  require("../../model/comic");
+import { getData, putData } from "../../common/cache";
 
 const getImageLinks = async (uri) => {
   try {
@@ -20,7 +22,11 @@ const getImageLinks = async (uri) => {
 };
 
 export const getChapterByID = async (chapterId) => {
-  const chapter = await Chapter.findById(chapterId);
+  const chapter = await Chapter.findById(chapterId).populate(
+    "comic_id",
+    "name"
+  );
+  console.log(chapter);
   if (chapter.images.length === 0) {
     const images = await getImageLinks(chapter.url);
     chapter.images = [...images];
@@ -28,5 +34,19 @@ export const getChapterByID = async (chapterId) => {
   }
   chapter.views++;
   await chapter.save();
-  return chapter;
+  console.log(chapters);
+  const key = chapter.comic_id;
+  const valueCache = getData(key);
+  if (valueCache) {
+    return { chapter, listChapters: valueCache };
+  }
+  const comic = await ComicDb.findById(chapter.comic_id).populate("chapters", [
+    "name",
+  ]);
+  console.log(comic);
+  const listChapters = [...comic.chapters];
+
+  putData(key, listChapters);
+
+  return { chapter, listChapters };
 };

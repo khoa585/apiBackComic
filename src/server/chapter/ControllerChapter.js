@@ -6,8 +6,10 @@ const router = express.Router();
 
 router.get("/detail/:chapterId", async (req, res) => {
   try {
-    const chapter = await getChapterByID(req.params.chapterId);
-    return responseHelper(req, res, null, chapter);
+    const { chapter, listChapters } = await getChapterByID(
+      req.params.chapterId
+    );
+    return responseHelper(req, res, null, { chapter, listChapters });
   } catch (error) {
     return responseHelper(req, res, error);
   }

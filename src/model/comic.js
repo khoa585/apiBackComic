@@ -30,4 +30,4 @@ let commic = new Schema(
   },
   { timestamps: true }
 );
-export const ComicDb = mongoose.model("comic", commic);
+module.exports = mongoose.model("comic", commic);

@@ -1,7 +1,5 @@
-import { ComicDb } from "../../model/comic";
+const ComicDb = require("../../model/comic");
 import { getData, putData } from "./../../common/cache";
-import { get, put } from "request-promise";
-import { query } from "express";
 
 export const getComicById = async (comicId) => {
   const comic = await ComicDb.findById(comicId).populate("chapters", [

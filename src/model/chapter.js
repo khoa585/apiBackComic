@@ -19,4 +19,4 @@ let chapter = new Schema(
   { timestamps: true }
 );
 chapter.indexes({ comic_id: 1 });
-export const Chapter = mongoose.model("chapter", chapter);
+module.exports = mongoose.model("chapter", chapter);
