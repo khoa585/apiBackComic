@@ -2,32 +2,37 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
 const Schema = mongoose.Schema;
-const userSchema = new Schema({
-  email: String,
-  first_name: String,
-  last_name: String,
-  password: String,
-  avatar: { type: String, default: "" },
-  role: { type: String, default: "user" },
-  comics_following: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "comic",
-    },
-  ],
-  comics_uploaded: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "comic",
-    },
-  ],
-  comments: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "comment",
-    },
-  ],
-});
+const userSchema = new Schema(
+  {
+    email: String,
+    first_name: String,
+    last_name: String,
+    password: String,
+    avatar: { type: String, default: "" },
+    role: { type: String, default: "user" },
+    comics_following: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "comic",
+      },
+    ],
+    comics_uploaded: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "comic",
+      },
+    ],
+    comments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "comment",
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
 userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 12);

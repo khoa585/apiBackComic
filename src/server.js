@@ -30,9 +30,9 @@ if(error){
 });
 }
 
-// mongoose.connection.collections['users'].drop( function(err) {
-//     console.log('collection dropped');
-// });
+mongoose.connection.collections['users'].drop( function(err) {
+    console.log('collection dropped');
+});
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
