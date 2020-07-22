@@ -11,14 +11,11 @@ const router = express.Router();
 
 router.post("/login", validator(USER_LOGIN_VALIDATION), async (req, res) => {
   try {
-    const user = req.body;
-    console.log(user);
-    const token = await userLogin(user);
-    console.log(token);
+    const { token, userInfo } = await userLogin(req.body);
     if (!token) {
       throw new Error("please try again");
     }
-    return responseHelper(req, res, token);
+    return responseHelper(req, res, null, { token, user: userInfo });
   } catch (error) {
     return responseHelper(req, res, error);
   }
@@ -29,17 +26,11 @@ router.post(
   validator(USER_REGISTER_VALIDATION),
   async (req, res) => {
     try {
-      const user = {
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        password: req.body.password,
-        email: req.body.email,
-      };
-      const token = await userRegister(user);
+      const { token, userInfo } = await userRegister(req.body);
       if (!token) {
         throw new Error("Please try again");
       }
-      return responseHelper(req, res, null, token);
+      return responseHelper(req, res, null, { token, user: userInfo });
     } catch (error) {
       return responseHelper(req, res, error);
     }

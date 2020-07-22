@@ -29,7 +29,6 @@ export const getChapterByID = async (chapterId) => {
   if (chapter.images.length === 0) {
     const images = await getImageLinks(chapter.url);
     chapter.images = [...images];
-    await chapter.save();
   }
   chapter.views++;
   await chapter.save();
@@ -38,9 +37,7 @@ export const getChapterByID = async (chapterId) => {
   if (valueCache) {
     return { chapter, listChapters: valueCache };
   }
-  const comic = await ComicDb.findById(chapter.comic_id).populate("chapters", [
-    "name",
-  ]);
+  const comic = await ComicDb.findById(chapter.comic_id).populate("chapters", "name");
   const listChapters = [...comic.chapters];
 
   putData(key, listChapters);

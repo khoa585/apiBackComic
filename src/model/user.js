@@ -7,6 +7,8 @@ const userSchema = new Schema({
   first_name: String,
   last_name: String,
   password: String,
+  avatar: { type: String, default: "" },
+  role: { type: String, default: "user" },
   comics_following: [
     {
       type: Schema.Types.ObjectId,
