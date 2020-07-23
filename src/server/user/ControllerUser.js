@@ -1,17 +1,21 @@
 import express from "express";
+const fileUpload = require("../../common/fileUpload");
+import fs from "fs";
+import path from "path";
 import validator from "express-validation";
 import {
   USER_REGISTER_VALIDATION,
   USER_LOGIN_VALIDATION,
 } from "./ValidationUser";
+import { AUTHEN_FAIL } from "../../constant/error";
 import { responseHelper } from "../../common/responsiveHelper";
-import { userRegister, userLogin } from "./ModelUser";
+import { userRegister, userLogin, uploadAvatar } from "./ModelUser";
 
 const router = express.Router();
 
 router.post("/login", validator(USER_LOGIN_VALIDATION), async (req, res) => {
   try {
-    const  userInfo = await userLogin(req.body);
+    const userInfo = await userLogin(req.body);
     return responseHelper(req, res, null, userInfo);
   } catch (error) {
     return responseHelper(req, res, error);
@@ -30,5 +34,25 @@ router.post(
     }
   }
 );
+
+router.post("/upload", fileUpload.single("image"), async (req, res) => {
+  try {
+    if (!req.user) {
+      throw new Error(AUTHEN_FAIL);
+    }
+    console.log(req.file);
+    const userId = req.user._id;
+    await uploadAvatar(userId, req.file.path);
+    return responseHelper(req, res, null, null);
+  } catch (error) {
+    if (req.file) {
+      fs.unlink(req.file.path, (err) => {
+        return responseHelper(req, res, err);
+      });
+    } else {
+      return responseHelper(req, res, error);
+    }
+  }
+});
 
 export default router;
