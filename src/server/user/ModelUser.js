@@ -12,7 +12,6 @@ export const userLogin = async (userData) => {
       throw new Error(PASSWORD_NOT_MATCHED);
     }
     let userInfo = user.toObject();
-    delete userInfo.role ;
     delete userInfo.password ;
     let token = encodeToken(userInfo);
     userInfo.token = token ;
