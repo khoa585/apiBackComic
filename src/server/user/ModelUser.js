@@ -42,8 +42,6 @@ export const getUserInfoById = async (idUser) => {
 
 export const uploadAvatar = async (userId, path) => {
   const user = await User.findById(userId);
-
   user.avatar = path;
-  console.log(user);
   await user.save();
 };

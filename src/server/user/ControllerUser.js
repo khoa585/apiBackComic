@@ -40,18 +40,14 @@ router.post("/upload", fileUpload.single("image"), async (req, res) => {
     if (!req.user) {
       throw new Error(AUTHEN_FAIL);
     }
-    console.log(req.file);
     const userId = req.user._id;
     await uploadAvatar(userId, req.file.path);
     return responseHelper(req, res, null, null);
   } catch (error) {
     if (req.file) {
-      fs.unlink(req.file.path, (err) => {
-        return responseHelper(req, res, err);
-      });
-    } else {
-      return responseHelper(req, res, error);
+      fs.unlinkSync(req.file.path);
     }
+    return responseHelper(req, res, error);
   }
 });
 
