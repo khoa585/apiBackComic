@@ -9,25 +9,13 @@ const userSchema = new Schema(
     last_name: String,
     password: String,
     avatar: { type: String, default: "" },
-    role: { type: String, default: "user" },
+    role: { type: Number, default: 1 },
     comics_following: [
       {
         type: Schema.Types.ObjectId,
         ref: "comic",
       },
-    ],
-    comics_uploaded: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "comic",
-      },
-    ],
-    comments: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "comment",
-      },
-    ],
+    ]
   },
   {
     timestamps: true,

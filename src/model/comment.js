@@ -14,7 +14,11 @@ const commentSchema = new Schema(
         name: String,
       },
     },
-    comic_id: { type: Schema.Types.ObjectId, ref: "comic" },
+    comic: { type: Schema.Types.ObjectId, ref: "comic" },
+    chapter:{
+      type:Schema.Types.ObjectId,
+      ref:"chapter"
+    },
     replies: [
       {
         content: String,

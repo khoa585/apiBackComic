@@ -11,8 +11,8 @@ const router = express.Router();
 
 router.post("/login", validator(USER_LOGIN_VALIDATION), async (req, res) => {
   try {
-    const { token, userInfo } = await userLogin(req.body);
-    return responseHelper(req, res, null, { token, user: userInfo });
+    const  userInfo = await userLogin(req.body);
+    return responseHelper(req, res, null, userInfo);
   } catch (error) {
     return responseHelper(req, res, error);
   }
@@ -23,8 +23,8 @@ router.post(
   validator(USER_REGISTER_VALIDATION),
   async (req, res) => {
     try {
-      const { token, userInfo } = await userRegister(req.body);
-      return responseHelper(req, res, null, { token, user: userInfo });
+      await userRegister(req.body);
+      return responseHelper(req, res, null, {});
     } catch (error) {
       return responseHelper(req, res, error);
     }

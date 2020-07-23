@@ -7,7 +7,7 @@ import  logger from 'morgan';
 import  mongoose from 'mongoose';
 import router from './server/index';
 import {responseHelper} from './common/responsiveHelper';
-import authentication from './common/authentication';
+import authentication  ,{Authorization}from './common/authentication';
 import {FAIL_VALIDATION} from './constant/error';
 if(process.env.DEV=="development"){
     mongoose.connect(process.env.MONGO_URL, {useNewUrlParser: true,useUnifiedTopology: true ,useCreateIndex: true},(error)=>{
@@ -29,17 +29,13 @@ if(error){
 }
 });
 }
-
-// mongoose.connection.collections['users'].drop( function(err) {
-//     console.log('collection dropped');
-// });
-
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cros());
 app.use(responseTime());
 app.use(authentication);
+app.use(Authorization);
 app.use(logger("dev"));
 app.set('trust proxy', true);
 app.use("/",router);
