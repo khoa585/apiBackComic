@@ -12,12 +12,13 @@ const commentSchema = new Schema(
       client: {
         email: String,
         name: String,
+        ip: String,
       },
     },
     comic: { type: Schema.Types.ObjectId, ref: "comic" },
-    chapter:{
-      type:Schema.Types.ObjectId,
-      ref:"chapter"
+    chapter: {
+      type: Schema.Types.ObjectId,
+      ref: "chapter",
     },
     replies: [
       {
@@ -30,6 +31,7 @@ const commentSchema = new Schema(
           client: {
             email: String,
             name: String,
+            ip: String,
           },
         },
         createdAt: { type: Date, default: Date.now() },

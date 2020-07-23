@@ -1,12 +1,8 @@
-import { USER_NOT_FOUND } from "../../constant/error";
-
 const Comment = require("../../model/comment");
 const User = require("../../model/user");
-import mongoose from "mongoose";
 
 export const createComment = async (comment, comicId, chapterId, userData) => {
   let newComment;
-  console.log(userData);
   if (!userData.id) {
     newComment = new Comment({
       content: comment,
@@ -14,6 +10,7 @@ export const createComment = async (comment, comicId, chapterId, userData) => {
         client: {
           name: userData.name,
           email: userData.email,
+          ip: userData.ip,
         },
       },
       comic: comicId,
@@ -34,14 +31,32 @@ export const createComment = async (comment, comicId, chapterId, userData) => {
 };
 
 export const getCommentsByComic = async (comicId) => {
-  console.log(comicId);
-  const comments = await Comment.find({ comic_id: comicId });
-  console.log(comments);
+  const comments = await Comment.find({ comic: comicId })
+    .populate({
+      path: "creator.user",
+      select: ["first_name", "last_name", "email", "avatar"],
+    })
+    .populate({
+      path: "replies.creator.user",
+      select: ["first_name", "last_name", "email", "avatar"],
+    })
+    .populate({ path: "chapter", select: "name" });
+
   return comments;
 };
 
-export const getCommentsByCreator = async (creatorId) => {
-  const comments = await Comment.find({ creator: { user: creatorId } });
+export const getCommentsByChapter = async (chapterId) => {
+  const comments = await Comment.find({ chapter: chapterId })
+    .populate({
+      path: "creator.user",
+      select: ["first_name", "last_name", "email", "avatar"],
+    })
+    .populate({
+      path: "replies.creator.user",
+      select: ["first_name", "last_name", "email", "avatar"],
+    })
+    .populate({ path: "chapter", select: "name" });
+
   return comments;
 };
 
@@ -55,6 +70,7 @@ export const createReply = async (replyText, commentId, userData) => {
         client: {
           name: userData.name,
           email: userData.email,
+          ip: userData.ip,
         },
       },
     };
@@ -68,5 +84,4 @@ export const createReply = async (replyText, commentId, userData) => {
   }
   comment.replies.push(newReply);
   await comment.save();
-  return comment;
 };

@@ -1,20 +1,24 @@
-import express, { response } from "express";
+import express from "express";
+import validator from "express-validation";
 
+import { COMMENT_VALIDATION, REPLY_VALIDATION } from "./ValidatorComment";
 import { responseHelper } from "../../common/responsiveHelper";
 
 import {
   createComment,
   getCommentsByComic,
-  getCommentsByCreator,
+  getCommentsByChapter,
   createReply,
 } from "./ModelComment";
 
 const router = express.Router();
 
-router.post("/create", async (req, res) => {
+//Tao comment
+router.post("/create", validator(COMMENT_VALIDATION), async (req, res) => {
   try {
     if (!req.user) {
       const { userData, comment, comicId, chapterId } = req.body;
+      userData.ip = req.ip;
       const newComment = await createComment(
         comment,
         comicId,
@@ -48,29 +52,30 @@ router.post("/comic", async (req, res) => {
 });
 
 //GET COMMENTS BY CREATOR_ID
-router.post("/creator", async (req, res) => {
+router.post("/chapter", async (req, res) => {
   try {
-    const { creatorId } = req.body;
-    const comments = await getCommentsByComic(creatorId);
+    const { chapterId } = req.body;
+    const comments = await getCommentsByChapter(chapterId);
     return responseHelper(req, res, null, comments);
   } catch (error) {
     return responseHelper(req, res, error);
   }
 });
 
-//REPLY 
-router.post("/reply/create", async (req, res) => {
+//REPLY
+router.post("/reply/create", validator(REPLY_VALIDATION), async (req, res) => {
   try {
     if (!req.user) {
       const { replyText, commentId, userData } = req.body;
-      const commentUpdated = await createReply(replyText, commentId, userData);
-      return responseHelper(req, res, null, commentUpdated);
+      userData.ip = req.ip;
+      await createReply(replyText, commentId, userData);
+      return responseHelper(req, res, null);
     } else {
       const { replyText, commentId } = req.body;
-      const commentUpdated = await createReply(replyText, commentId, {
+      await createReply(replyText, commentId, {
         id: req.user._id,
       });
-      return responseHelper(req, res, null, commentUpdated);
+      return responseHelper(req, res, null);
     }
   } catch (error) {
     return responseHelper(req, res, error);
