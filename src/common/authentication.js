@@ -2,6 +2,8 @@ require('dotenv').config();
 const md5 = require('md5');
 import {responsHelper} from './responsiveHelper';
 import {AUTHEN_FAIL ,ERROR_AUTHEN ,FAIL_VALIDATION} from '../constant/error';
+import {verifyToken} from './jwtHelper';
+import {getUserInfoById} from './../server/user/ModelUser';
 const TIME_EXPRIED=1000*60*60 ;
 function authentication(req,res,next){
     let {unittime,token,admin} = req.headers ;
@@ -22,3 +24,17 @@ function authentication(req,res,next){
     next();
 }
 export default authentication ;
+export const Authorization = async (req,res,next)=>{
+    let token = req.headers.Authorization || req.headers.authorization;
+    if(token){
+        let data = verifyToken(token);
+        if(!data || !data._id){
+            next();
+        }
+        let userInfo = await getUserInfoById(data._id);
+        if(userInfo){
+            req.user = userInfo ;
+        }
+    }
+    next();
+}

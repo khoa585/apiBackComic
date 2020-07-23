@@ -30,3 +30,6 @@ export const userRegister = async (userData) => {
     throw new Error(EMAIL_TAKEN);
   }
 };
+export const getUserInfoById = async (idUser)=>{
+    return await User.findById(idUser);
+}
