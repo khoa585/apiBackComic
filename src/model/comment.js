@@ -15,6 +15,10 @@ const commentSchema = new Schema(
       },
     },
     comic: { type: Schema.Types.ObjectId, ref: "comic" },
+    chapter:{
+      type:Schema.Types.ObjectId,
+      ref:"chapter"
+    },
     replies: [
       {
         content: String,

@@ -15,19 +15,7 @@ const userSchema = new Schema(
         type: Schema.Types.ObjectId,
         ref: "comic",
       },
-    ],
-    comics_uploaded: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "comic",
-      },
-    ],
-    comments: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "comment",
-      },
-    ],
+    ]
   },
   {
     timestamps: true,
