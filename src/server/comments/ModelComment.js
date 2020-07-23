@@ -4,42 +4,69 @@ const Comment = require("../../model/comment");
 const User = require("../../model/user");
 import mongoose from "mongoose";
 
-export const createComment = async (comment, userData, comicId) => {
+export const createComment = async (comment, comicId, chapterId, userData) => {
   let newComment;
-
-  if (userData.id) {
-    const user = await User.findById(userData.id);
-    if (!user) {
-      throw new Error();
-    }
+  console.log(userData);
+  if (!userData.id) {
+    newComment = new Comment({
+      content: comment,
+      creator: {
+        client: {
+          name: userData.name,
+          email: userData.email,
+        },
+      },
+      comic: comicId,
+      chapter: chapterId,
+    });
+  } else {
     newComment = new Comment({
       content: comment,
       creator: {
         user: userData.id,
       },
-      comic_id: comicId,
+      comic: comicId,
+      chapter: chapterId,
     });
+  }
+  await newComment.save();
+  return newComment;
+};
 
-    const sess = mongoose.startSession();
-    sess.startTransaction();
-    await newComment.save({ session: sess });
-    user.comments.push(newComment);
-    await user.save({ session: sess });
-    await 
-    sess.commit();
-  } else {
-    newComment = new Comment({
-      content: comment,
+export const getCommentsByComic = async (comicId) => {
+  console.log(comicId);
+  const comments = await Comment.find({ comic_id: comicId });
+  console.log(comments);
+  return comments;
+};
+
+export const getCommentsByCreator = async (creatorId) => {
+  const comments = await Comment.find({ creator: { user: creatorId } });
+  return comments;
+};
+
+export const createReply = async (replyText, commentId, userData) => {
+  const comment = await Comment.findById(commentId);
+  let newReply;
+  if (!userData.id) {
+    newReply = {
+      content: replyText,
       creator: {
         client: {
-          email: userData.email,
           name: userData.name,
+          email: userData.email,
         },
       },
-      comic_id: comicId,
-    });
-    await newComment.save();
+    };
+  } else {
+    newReply = {
+      content: replyText,
+      creator: {
+        user: userData.id,
+      },
+    };
   }
-
-  return newComment;
+  comment.replies.push(newReply);
+  await comment.save();
+  return comment;
 };
