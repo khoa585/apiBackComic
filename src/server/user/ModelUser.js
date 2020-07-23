@@ -26,8 +26,9 @@ export const userLogin = async (userData) => {
       id: user._id,
       role: user.role,
       avatar: user.avatar,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
-    console.log(userInfo)
 
     return { token, userInfo };
   }
@@ -50,6 +51,8 @@ export const userRegister = async (userData) => {
       id: newUser._id,
       role: newUser.role,
       avatar: newUser.avatar,
+      createdAt: newUser.createdAt,
+      updatedAt: newUser.updatedAt,
     };
 
     return { token, userInfo };
