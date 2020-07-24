@@ -21,10 +21,11 @@ const getImageLinks = async (uri) => {
 };
 
 export const getChapterByID = async (chapterId) => {
-  const chapter = await Chapter.findById(chapterId).populate(
-    "comic_id",
-    "name"
-  );
+  const chapter = await Chapter.findById(chapterId).populate({
+    path: "comic_id",
+    select: "name",
+  });
+
   if (chapter.images.length === 0) {
     const images = await getImageLinks(chapter.url);
     chapter.images = [...images];
@@ -37,8 +38,10 @@ export const getChapterByID = async (chapterId) => {
     return { chapter, listChapters: valueCache };
   }
   const comic = await Chapter.find({
-    comic_id:chapter.comic_id
-  }).sort({index:-1}).select("_id name index views")
+    comic_id: chapter.comic_id,
+  })
+    .sort({ index: -1 })
+    .select("_id name index views");
   const listChapters = comic;
   putData(key, listChapters);
 
