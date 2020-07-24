@@ -3,13 +3,15 @@ import { getData, putData } from "./../../common/cache";
 
 export const getComicById = async (comicId) => {
   const comic = await ComicDb.findById(comicId).populate({
-      path:"chapters",
-      select:{
-        name:1,views:1,updatedAt:1
-      },
-      options:{
-        sort: { index: -1 } 
-      }
+    path: "chapters",
+    select: {
+      name: 1,
+      views: 1,
+      updatedAt: 1,
+    },
+    options: {
+      sort: { index: -1 },
+    },
   });
   return comic;
 };
@@ -29,7 +31,7 @@ export const getListComics = async (type, page, numberItem) => {
       .sort({ views: -1 })
       .skip((page - 1) * numberItem)
       .limit(numberItem)
-      .populate("chapters", ["name", "updatedAt", "views"]);
+      .populate({ path: "chapters", select: ["name", "updateAt", "views"] });
   } else {
     result = await ComicDb.find({
       enable: true,
@@ -37,7 +39,7 @@ export const getListComics = async (type, page, numberItem) => {
       .sort({ updatedAt: -1 })
       .skip((page - 1) * numberItem)
       .limit(numberItem)
-      .populate("chapters", ["name", "updatedAt", "views"]);
+      .populate({ path: "chapters", select: ["name", "updateAt", "views"] });
   }
   let total = await ComicDb.countDocuments();
   let data = result.map((item) => {
@@ -72,7 +74,7 @@ export const searchListComics = async (name, authors, page, numberitem) => {
   const result = await ComicDb.find(query)
     .skip((page - 1) * numberitem)
     .limit(numberitem)
-    .populate("chapters", ["name", "updateAt", "views"]);
+    .populate({path: "chapters", select: ["name", "updateAt", "views"]});
   const comics = result.map((item) => {
     item.chapters = item.chapters.reverse().slice(0, 3);
     return item;

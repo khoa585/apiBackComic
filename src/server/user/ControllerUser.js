@@ -1,7 +1,5 @@
 import express from "express";
 const fileUpload = require("../../common/fileUpload");
-import fs from "fs";
-import path from "path";
 import validator from "express-validation";
 import {
   USER_REGISTER_VALIDATION,
@@ -41,12 +39,10 @@ router.post("/upload", fileUpload.single("image"), async (req, res) => {
       throw new Error(AUTHEN_FAIL);
     }
     const userId = req.user._id;
-    await uploadAvatar(userId, req.file.path);
+    const avatarUrl = req.body.avatar;
+    await uploadAvatar(userId, avatarUrl);
     return responseHelper(req, res, null, null);
   } catch (error) {
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
     return responseHelper(req, res, error);
   }
 });
