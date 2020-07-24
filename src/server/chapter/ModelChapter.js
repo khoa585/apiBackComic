@@ -10,7 +10,6 @@ const getImageLinks = async (uri) => {
     const response = await request.get(uri);
     const $ = await cheerio.load(response);
     let imageLinks = [];
-
     $(".page-chapter img").each(function (i, elem) {
       imageLinks[i] = $(this).attr("src");
     });
@@ -37,9 +36,10 @@ export const getChapterByID = async (chapterId) => {
   if (valueCache) {
     return { chapter, listChapters: valueCache };
   }
-  const comic = await ComicDb.findById(chapter.comic_id).populate("chapters", "name");
-  const listChapters = [...comic.chapters];
-
+  const comic = await Chapter.find({
+    comic_id:chapter.comic_id
+  }).sort({index:-1}).select("_id name index views")
+  const listChapters = comic;
   putData(key, listChapters);
 
   return { chapter, listChapters };

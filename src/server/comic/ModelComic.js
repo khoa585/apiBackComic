@@ -2,11 +2,15 @@ const ComicDb = require("../../model/comic");
 import { getData, putData } from "./../../common/cache";
 
 export const getComicById = async (comicId) => {
-  const comic = await ComicDb.findById(comicId).populate("chapters", [
-    "name",
-    "views",
-    "updatedAt",
-  ]);
+  const comic = await ComicDb.findById(comicId).populate({
+      path:"chapters",
+      select:{
+        name:1,views:1,updatedAt:1
+      },
+      options:{
+        sort: { index: -1 } 
+      }
+  });
   return comic;
 };
 
