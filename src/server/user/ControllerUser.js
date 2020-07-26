@@ -1,4 +1,5 @@
 import express from "express";
+import passport from "passport";
 const fileUpload = require("../../common/fileUpload");
 import validator from "express-validation";
 import {
@@ -7,7 +8,13 @@ import {
 } from "./ValidationUser";
 import { AUTHEN_FAIL } from "../../constant/error";
 import { responseHelper } from "../../common/responsiveHelper";
-import { userRegister, userLogin, uploadAvatar } from "./ModelUser";
+import {
+  userRegister,
+  userLogin,
+  uploadAvatar,
+  userFacebookLogin,
+  userGoogleLogin,
+} from "./ModelUser";
 
 const router = express.Router();
 
@@ -28,6 +35,32 @@ router.post(
       await userRegister(req.body);
       return responseHelper(req, res, null, {});
     } catch (error) {
+      return responseHelper(req, res, error);
+    }
+  }
+);
+router.post(
+  "/auth/facebook",
+  passport.authenticate("facebook-token", { session: false }),
+  async (req, res) => {
+    try {
+      const userInfo = await userFacebookLogin(req.user);
+      return responseHelper(req, res, null, userInfo);
+    } catch (error) {
+      return responseHelper(req, res, error);
+    }
+  }
+);
+
+router.post(
+  "/auth/google",
+  passport.authenticate("googleToken", { session: false }),
+  async (req, res) => {
+    try {
+      const userInfo = await userGoogleLogin(req.user);
+      return responseHelper(req, res, null, userInfo);
+    } catch (error) {
+      console.log(error);
       return responseHelper(req, res, error);
     }
   }

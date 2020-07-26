@@ -18,13 +18,11 @@ router.post("/create", validator(COMMENT_VALIDATION), async (req, res) => {
   try {
     if (!req.user) {
       const { userData, comment, comicId, chapterId } = req.body;
-      userData.ip = req.ip;
-      const newComment = await createComment(
-        comment,
-        comicId,
-        chapterId,
-        userData
-      );
+
+      const newComment = await createComment(comment, comicId, chapterId, {
+        ...userData,
+        ip: req.ip,
+      });
       return responseHelper(req, res, null, newComment);
     } else {
       const { comment, comicId, chapterId } = req.body;

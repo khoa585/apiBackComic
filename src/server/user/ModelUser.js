@@ -7,7 +7,7 @@ import {
 } from "../../constant/error";
 
 export const userLogin = async (userData) => {
-  const user = await User.findOne({ email: userData.email }).select(
+  const user = await User.findOne({ "local.email": userData.email }).select(
     "-comics_following"
   );
   if (!user) {
@@ -18,7 +18,7 @@ export const userLogin = async (userData) => {
       throw new Error(PASSWORD_NOT_MATCHED);
     }
     let userInfo = user.toObject();
-    delete userInfo.password;
+    delete userInfo.local.password;
     let token = encodeToken(userInfo);
     userInfo.token = token;
     delete userInfo._id;
@@ -26,8 +26,25 @@ export const userLogin = async (userData) => {
   }
 };
 
+export const userFacebookLogin = async (userData) => {
+  let userInfo = userData.toObject();
+  let token = encodeToken(userInfo);
+  userInfo.token = token;
+  delete userInfo._id;
+  return userInfo;
+};
+
+export const userGoogleLogin = async (userData) => {
+  let userInfo = userData.toObject();
+  let token = encodeToken(userInfo);
+  userInfo.token = token;
+  delete userInfo._id;
+  return userInfo;
+};
+
+
 export const userRegister = async (userData) => {
-  const user = await User.findOne({ email: userData.email });
+  const user = await User.findOne({ "local.email": userData.local.email });
   if (!user) {
     const newUser = await User(userData);
     await newUser.save();
