@@ -5,6 +5,7 @@ import validator from "express-validation";
 import {
   USER_REGISTER_VALIDATION,
   USER_LOGIN_VALIDATION,
+  ACCESS_TOKEN_VALIDATION,
 } from "./ValidationUser";
 import { AUTHEN_FAIL } from "../../constant/error";
 import { responseHelper } from "../../common/responsiveHelper";
@@ -39,18 +40,23 @@ router.post(
     }
   }
 );
-router.post("/auth/facebook", async (req, res) => {
-  try {
-    const accessToken = req.body.access_token;
-    const userInfo = await userFacebookLogin(accessToken);
-    return responseHelper(req, res, null, userInfo);
-  } catch (error) {
-    return responseHelper(req, res, error);
+router.post(
+  "/auth/facebook",
+  validator(ACCESS_TOKEN_VALIDATION),
+  async (req, res) => {
+    try {
+      const accessToken = req.body.access_token;
+      const userInfo = await userFacebookLogin(accessToken);
+      return responseHelper(req, res, null, userInfo);
+    } catch (error) {
+      return responseHelper(req, res, error);
+    }
   }
-});
+);
 
 router.post(
   "/auth/google",
+  validator(ACCESS_TOKEN_VALIDATION),
   async (req, res) => {
     try {
       const accessToken = req.body.access_token;

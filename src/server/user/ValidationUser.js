@@ -31,3 +31,10 @@ export const USER_LOGIN_VALIDATION = {
       .required(),
   },
 };
+
+export const ACCESS_TOKEN_VALIDATION = {
+  options: { allowUnknownBody: false },
+  body: {
+    access_token: Joi.string().required(),
+  },
+};

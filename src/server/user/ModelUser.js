@@ -37,6 +37,7 @@ export const userFacebookLogin = async (accessToken) => {
   const response = await request.get(url);
   const userData = JSON.parse(response);
 
+  if (!userData) throw new Error(USER_NOT_MATCHED);
   const userExisting = await User.findOne({ "facebook.id": userData.id });
   if (!userExisting) {
     const user = new User({
@@ -66,6 +67,8 @@ export const userGoogleLogin = async (accessToken) => {
 
   const response = await request.get(url);
   const userData = JSON.parse(response);
+
+  if (!userData) throw new Error(USER_NOT_MATCHED);
   const userExisting = await User.findOne({ "google.id": userData.id });
   if (!userExisting) {
     const user = new User({
