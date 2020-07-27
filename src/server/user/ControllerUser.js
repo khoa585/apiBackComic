@@ -53,7 +53,8 @@ router.post(
   "/auth/google",
   async (req, res) => {
     try {
-      const userInfo = await userGoogleLogin(req.user);
+      const accessToken = req.body.access_token;
+      const userInfo = await userGoogleLogin(accessToken);
       return responseHelper(req, res, null, userInfo);
     } catch (error) {
       console.log(error);

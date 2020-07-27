@@ -8,7 +8,8 @@ import {
 } from "../../constant/error";
 const FB_API_URL =
   "https://graph.facebook.com/me?fields=picture,name,email&access_token=";
-const GOOGLE_API_URL = "";
+const GOOGLE_API_URL =
+  "https://www.googleapis.com/oauth2/v2/userinfo?access_token=";
 
 export const userLogin = async (userData) => {
   const user = await User.findOne({ "local.email": userData.email }).select(
@@ -49,7 +50,6 @@ export const userFacebookLogin = async (accessToken) => {
       avatar: userData.picture.data.url,
     });
     await user.save();
-    console.log(user);
     userInfo = user.toObject();
   } else {
     userInfo = userExisting.toObject();
@@ -60,9 +60,31 @@ export const userFacebookLogin = async (accessToken) => {
   return userInfo;
 };
 
-export const userGoogleLogin = async (userData) => {
-  let userInfo = userData.toObject();
-  let token = encodeToken(userInfo);
+export const userGoogleLogin = async (accessToken) => {
+  const url = GOOGLE_API_URL + accessToken;
+  let userInfo;
+
+  const response = await request.get(url);
+  const userData = JSON.parse(response);
+  const userExisting = await User.findOne({ "google.id": userData.id });
+  if (!userExisting) {
+    const user = new User({
+      method: "google",
+      google: {
+        id: userData.id,
+        email: userData.email,
+      },
+      first_name: userData.family_name,
+      last_name: userData.given_name,
+      avatar: userData.picture,
+    });
+    await user.save();
+    userInfo = user.toObject();
+  } else {
+    userInfo = userExisting.toObject();
+  }
+
+  const token = encodeToken(userInfo);
   userInfo.token = token;
   delete userInfo._id;
   return userInfo;
