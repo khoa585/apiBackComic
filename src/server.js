@@ -11,7 +11,6 @@ import { responseHelper } from "./common/responsiveHelper";
 import authentication, { Authorization } from "./common/authentication";
 import { FAIL_VALIDATION } from "./constant/error";
 import passport from "passport";
-import { passportMiddleware } from "./common/passport";
 if (process.env.DEV == "development") {
   mongoose.connect(
     process.env.MONGO_URL,
@@ -50,7 +49,6 @@ app.use(bodyParser.json());
 app.use(cros());
 app.use(responseTime());
 app.use(authentication);
-passportMiddleware();
 app.use(Authorization);
 app.use(logger("dev"));
 app.set("trust proxy", true);

@@ -39,22 +39,18 @@ router.post(
     }
   }
 );
-router.post(
-  "/auth/facebook",
-  passport.authenticate("facebook-token", { session: false }),
-  async (req, res) => {
-    try {
-      const userInfo = await userFacebookLogin(req.user);
-      return responseHelper(req, res, null, userInfo);
-    } catch (error) {
-      return responseHelper(req, res, error);
-    }
+router.post("/auth/facebook", async (req, res) => {
+  try {
+    const accessToken = req.body.access_token;
+    const userInfo = await userFacebookLogin(accessToken);
+    return responseHelper(req, res, null, userInfo);
+  } catch (error) {
+    return responseHelper(req, res, error);
   }
-);
+});
 
 router.post(
   "/auth/google",
-  passport.authenticate("googleToken", { session: false }),
   async (req, res) => {
     try {
       const userInfo = await userGoogleLogin(req.user);

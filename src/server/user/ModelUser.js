@@ -1,10 +1,14 @@
 const User = require("../../model/user");
 import { encodeToken } from "../../common/jwtHelper";
+import request from "request-promise";
 import {
   USER_NOT_MATCHED,
   EMAIL_TAKEN,
   PASSWORD_NOT_MATCHED,
 } from "../../constant/error";
+const FB_API_URL =
+  "https://graph.facebook.com/me?fields=picture,name,email&access_token=";
+const GOOGLE_API_URL = "";
 
 export const userLogin = async (userData) => {
   const user = await User.findOne({ "local.email": userData.email }).select(
@@ -26,9 +30,31 @@ export const userLogin = async (userData) => {
   }
 };
 
-export const userFacebookLogin = async (userData) => {
-  let userInfo = userData.toObject();
-  let token = encodeToken(userInfo);
+export const userFacebookLogin = async (accessToken) => {
+  let userInfo;
+  const url = FB_API_URL + accessToken;
+  const response = await request.get(url);
+  const userData = JSON.parse(response);
+
+  const userExisting = await User.findOne({ "facebook.id": userData.id });
+  if (!userExisting) {
+    const user = new User({
+      method: "facebook",
+      first_name: userData.first_name,
+      last_name: userData.last_name,
+      facebook: {
+        id: userData.id,
+        email: userData.email,
+      },
+      avatar: userData.picture.data.url,
+    });
+    await user.save();
+    console.log(user);
+    userInfo = user.toObject();
+  } else {
+    userInfo = userExisting.toObject();
+  }
+  const token = encodeToken(userInfo);
   userInfo.token = token;
   delete userInfo._id;
   return userInfo;
@@ -41,7 +67,6 @@ export const userGoogleLogin = async (userData) => {
   delete userInfo._id;
   return userInfo;
 };
-
 
 export const userRegister = async (userData) => {
   const user = await User.findOne({ "local.email": userData.local.email });
