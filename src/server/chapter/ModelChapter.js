@@ -1,10 +1,8 @@
 import request from "request-promise";
 import cheerio from "cheerio";
-
 const Chapter = require("../../model/chapter");
-const ComicDb = require("../../model/comic");
 import { getData, putData } from "../../common/cache";
-
+import {getDataRedis,setDataRedis}from './../../common/redis';
 const getImageLinks = async (uri) => {
   try {
     const response = await request.get(uri);
@@ -25,7 +23,7 @@ export const getChapterByID = async (chapterId) => {
     path: "comic_id",
     select: "name",
   });
-
+  console.log(chapter);
   if (chapter.images.length === 0) {
     const images = await getImageLinks(chapter.url);
     chapter.images = [...images];
@@ -47,3 +45,33 @@ export const getChapterByID = async (chapterId) => {
 
   return { chapter, listChapters };
 };
+Date.prototype.getWeek = function() {
+  var oneJan = new Date(this.getFullYear(),0,1);
+  return Math.ceil((((this - oneJan) / 86400000) + oneJan.getDay()+1)/7);
+}
+
+export const setViewsRedis = async(comicId)=>{
+    const time = new Date();
+    console.log(comicId);
+    const TOP_MONTH = `TOP_MONTH-${time.getMonth()}-${time.getFullYear()}`;
+    const TOP_WEK = `TOP_WEK-${time.getWeek()}-${time.getFullYear()}}`;
+    const TOP_DAY =`TOP_DAY-${time.getDate()}-${time.getMonth()}-${time.getFullYear()}`
+    console.log(TOP_DAY,TOP_MONTH,TOP_WEK);
+    await Promise.all([setDataToTop(TOP_DAY,comicId),setDataToTop(TOP_MONTH,comicId),setDataToTop(TOP_WEK,comicId)])
+}
+const setDataToTop = async(key,comicId)=>{
+    let dataGet = await getDataRedis(key);
+    console.log(dataGet);
+    if(dataGet){
+        dataGet = JSON.parse(dataGet);
+        if(dataGet[comicId]){
+            dataGet[comicId]++
+        }else {
+          dataGet[comicId]=1 ;
+        }
+    }else {
+      dataGet = {};
+      dataGet[comicId]=1
+    }
+   await setDataRedis(key,JSON.stringify(dataGet));
+}
