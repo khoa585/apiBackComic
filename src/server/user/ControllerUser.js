@@ -33,8 +33,9 @@ router.post(
   validator(USER_REGISTER_VALIDATION),
   async (req, res) => {
     try {
-      await userRegister(req.body);
-      return responseHelper(req, res, null, {});
+      const userInfo = await userRegister(req.body);
+
+      return responseHelper(req, res, null, userInfo);
     } catch (error) {
       return responseHelper(req, res, error);
     }
@@ -63,7 +64,6 @@ router.post(
       const userInfo = await userGoogleLogin(accessToken);
       return responseHelper(req, res, null, userInfo);
     } catch (error) {
-      console.log(error);
       return responseHelper(req, res, error);
     }
   }

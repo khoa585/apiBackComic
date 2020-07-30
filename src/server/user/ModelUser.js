@@ -98,6 +98,11 @@ export const userRegister = async (userData) => {
   if (!user) {
     const newUser = await User(userData);
     await newUser.save();
+    let userInfo = newUser.toObject();
+    const token = encodeToken(userInfo);
+    userInfo.token = token;
+    delete userInfo._id;
+    return userInfo;
   } else {
     throw new Error(EMAIL_TAKEN);
   }
