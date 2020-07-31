@@ -1,6 +1,6 @@
 const ComicDb = require("../../model/comic");
 import { getData, putData } from "./../../common/cache";
-
+import {getDataRedis} from './../../common/redis';
 export const getComicById = async (comicId) => {
   const comic = await ComicDb.findById(comicId).populate({
     path: "chapters",
@@ -125,3 +125,37 @@ export const searchListComics = async (name, authors, page, numberitem) => {
 //     return { comics, total };
 //   }
 // };
+export const getListTop = async (type)=>{
+      let key = `LIST_TOP-${type}`;
+      let dataCache = getData(key);
+      if(dataCache) return dataCache ;
+      const time = new Date();
+      let keyRedis ;
+      //type 1: MonTh
+      //type 2 : Wek
+      //type 3: Day
+      if(type==1){
+          keyRedis=`TOP_MONTH-${time.getMonth()}-${time.getFullYear()}`;
+      }else if(type==2){
+          keyRedis=`TOP_WEK-${time.getWeek()}-${time.getFullYear()}}`
+      }
+      else {
+          keyRedis=`TOP_DAY-${time.getDate()}-${time.getMonth()}-${time.getFullYear()}`; 
+      }
+      let dataRedis = await getDataRedis(keyRedis);
+      if(!dataRedis){return []}
+      dataRedis= JSON.parse(dataRedis);
+      let objectTop = [];
+      for(let property in dataRedis){
+          objectTop.push({
+              id:property,
+              views:dataRedis[property]
+          })
+      }
+      let comicId = objectTop.sort((a,b)=> {
+          if(a.views>b.views)return -1 ;
+          if(a.views<b.views)return 1 ;
+          return  0 ;
+      });
+      console.log(comicId);
+}

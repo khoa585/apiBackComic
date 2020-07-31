@@ -10,7 +10,6 @@ import router from "./server/index";
 import { responseHelper } from "./common/responsiveHelper";
 import authentication, { Authorization } from "./common/authentication";
 import { FAIL_VALIDATION } from "./constant/error";
-import passport from "passport";
 if (process.env.DEV == "development") {
   mongoose.connect(
     process.env.MONGO_URL,
@@ -33,7 +32,7 @@ if (process.env.DEV == "development") {
         console.log(error);
         console.log("Thất Bại");
       } else {
-        console.log("Connect successed to mongo");
+        console.log("Connect successed to mongo DEV");
       }
     }
   );

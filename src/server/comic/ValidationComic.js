@@ -36,3 +36,10 @@ export const VALIDATION_SHOW_COMIC = {
     id: Joi.number().required(),
   },
 };
+export const VALIDATION_LIST_TOP = {
+  options: { allowUnknownBody: false },
+  body: {
+    type: Joi.number().valid([1,2,3]),
+  },
+};
+

@@ -52,16 +52,13 @@ Date.prototype.getWeek = function() {
 
 export const setViewsRedis = async(comicId)=>{
     const time = new Date();
-    console.log(comicId);
     const TOP_MONTH = `TOP_MONTH-${time.getMonth()}-${time.getFullYear()}`;
     const TOP_WEK = `TOP_WEK-${time.getWeek()}-${time.getFullYear()}}`;
     const TOP_DAY =`TOP_DAY-${time.getDate()}-${time.getMonth()}-${time.getFullYear()}`
-    console.log(TOP_DAY,TOP_MONTH,TOP_WEK);
     await Promise.all([setDataToTop(TOP_DAY,comicId),setDataToTop(TOP_MONTH,comicId),setDataToTop(TOP_WEK,comicId)])
 }
 const setDataToTop = async(key,comicId)=>{
     let dataGet = await getDataRedis(key);
-    console.log(dataGet);
     if(dataGet){
         dataGet = JSON.parse(dataGet);
         if(dataGet[comicId]){
