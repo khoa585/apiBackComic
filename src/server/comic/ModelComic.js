@@ -31,7 +31,7 @@ export const getListComics = async (type, page, numberItem) => {
       .sort({ views: -1 })
       .skip((page - 1) * numberItem)
       .limit(numberItem)
-      .populate({ path: "chapters", select: ["name", "updateAt", "views"] });
+      .populate({ path: "chapters", select: ["name", "updatedAt", "views" ,"createdAt"] });
   } else {
     result = await ComicDb.find({
       enable: true,
@@ -39,7 +39,7 @@ export const getListComics = async (type, page, numberItem) => {
       .sort({ updatedAt: -1 })
       .skip((page - 1) * numberItem)
       .limit(numberItem)
-      .populate({ path: "chapters", select: ["name", "updateAt", "views"] });
+      .populate({ path: "chapters", select: ["name", "updatedAt", "views","createdAt"] });
   }
   let total = await ComicDb.countDocuments();
   let data = result.map((item) => {
@@ -84,47 +84,6 @@ export const searchListComics = async (name, authors, page, numberitem) => {
   putData(key, { comics, total });
   return { comics, total };
 };
-
-// export const searchListComics = async (query, page, numberitem) => {
-//   const key = `${query}-${page}-${numberitem}`;
-//   const cacheValue = getData(key);
-//   if (cacheValue) {
-//     console.log("Run cacheValue");
-//     return cacheValue;
-//   } else {
-//     console.log("Run here");
-//     let q = ComicDb.find({
-//       enable: true,
-//     });
-
-//     const regex = new RegExp(query, "i");
-
-//     //GET data in field name
-//     const searchByName = q
-//       .regex("name", regex)
-//       .skip((page - 1) * numberitem)
-//       .limit(numberitem)
-//       .populate("chapters", ["name", "createdAt", "views"]);
-//     console.log("Running");
-//     const resultByName = await searchByName.exec();
-//     const searchByAuthor = q
-//       .regex("authors", regex)
-//       .skip((page - 1) * numberitem)
-//       .limit(numberitem)
-//       .populate("chapters", ["name", "createdAt", "views"]);
-//     const resultByAuthor = await searchByAuthor.exec();
-
-//     let comics = [...resultByAuthor, ...resultByName];
-//     comics = comics.map((item) => {
-//       item.chapters = item.chapters.reverse().slice(0, 3);
-//       return item;
-//     });
-//     const total =
-//       (await searchByAuthor.exec()).length + (await searchByName.exec()).length;
-//     putData(key, { comics, total });
-//     return { comics, total };
-//   }
-// };
 export const getListTop = async (type)=>{
       let key = `LIST_TOP-${type}`;
       let dataCache = getData(key);
@@ -152,10 +111,37 @@ export const getListTop = async (type)=>{
               views:dataRedis[property]
           })
       }
-      let comicId = objectTop.sort((a,b)=> {
+      let listComicTop = objectTop.sort((a,b)=> {
           if(a.views>b.views)return -1 ;
           if(a.views<b.views)return 1 ;
           return  0 ;
       });
-      console.log(comicId);
+      listComicTop=listComicTop.slice(0,5);
+      let listId = listComicTop.map(item=>item.id);
+      let listComicResult = await ComicDb.find({
+        _id:{$in:listId}
+      }).populate({
+          path:"chapters",
+          select: ["name", "updatedAt", "views","createdAt"],
+          options:{
+              sort:{index:-1},
+          },
+          perDocumentLimit:1
+      }).select("-genres -url -enable -status -description");
+      listComicResult=listComicResult.map((comic)=>{
+          comic = comic.toObject();
+          listComicTop.forEach(item=>{
+              if(item.id==comic._id.toString()){
+                comic.views_top=item.views ;
+              }
+          })
+          return comic ;
+      })
+      listComicResult= listComicResult.sort((a,b)=>{
+        if(a.views_top>b.views_top)return -1 ;
+        if(a.views_top<b.views_top)return 1 ;
+        return  0 ;
+      })
+      putData(key,listComicResult);
+      return listComicResult ;
 }

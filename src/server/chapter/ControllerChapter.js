@@ -9,7 +9,6 @@ router.get("/detail/:chapterId", async (req, res) => {
     const { chapter, listChapters } = await getChapterByID(
       req.params.chapterId
     );
-    console.log(chapter);
     setViewsRedis(chapter.comic_id._id);
     return responseHelper(req, res, null, { chapter, listChapters });
   } catch (error) {

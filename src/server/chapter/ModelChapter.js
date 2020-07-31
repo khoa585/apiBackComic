@@ -23,7 +23,6 @@ export const getChapterByID = async (chapterId) => {
     path: "comic_id",
     select: "name",
   });
-  console.log(chapter);
   if (chapter.images.length === 0) {
     const images = await getImageLinks(chapter.url);
     chapter.images = [...images];
@@ -42,7 +41,6 @@ export const getChapterByID = async (chapterId) => {
     .select("_id name index views");
   const listChapters = comic;
   putData(key, listChapters);
-
   return { chapter, listChapters };
 };
 Date.prototype.getWeek = function() {
