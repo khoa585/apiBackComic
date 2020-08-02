@@ -14,6 +14,7 @@ export const USER_REGISTER_VALIDATION = {
       password: Joi.string().min(6).required(),
     }),
     method: Joi.string().required(),
+    gender: Joi.string().required(),
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
   },

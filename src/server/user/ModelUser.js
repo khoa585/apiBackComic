@@ -1,6 +1,8 @@
 const User = require("../../model/user");
 import { encodeToken } from "../../common/jwtHelper";
 import request from "request-promise";
+// import nodemailer from "nodemailer";
+
 import {
   USER_NOT_MATCHED,
   EMAIL_TAKEN,
@@ -25,9 +27,8 @@ export const userLogin = async (userData) => {
     let userInfo = user.toObject();
     delete userInfo.local.password;
     let token = encodeToken(userInfo);
-    userInfo.token = token;
     delete userInfo._id;
-    return userInfo;
+    return { userInfo, token };
   }
 };
 
@@ -56,9 +57,8 @@ export const userFacebookLogin = async (accessToken) => {
     userInfo = userExisting.toObject();
   }
   const token = encodeToken(userInfo);
-  userInfo.token = token;
   delete userInfo._id;
-  return userInfo;
+  return { userInfo, token };
 };
 
 export const userGoogleLogin = async (accessToken) => {
@@ -88,9 +88,8 @@ export const userGoogleLogin = async (accessToken) => {
   }
 
   const token = encodeToken(userInfo);
-  userInfo.token = token;
   delete userInfo._id;
-  return userInfo;
+  return { userInfo, token };
 };
 
 export const userRegister = async (userData) => {
@@ -100,9 +99,9 @@ export const userRegister = async (userData) => {
     await newUser.save();
     let userInfo = newUser.toObject();
     const token = encodeToken(userInfo);
-    userInfo.token = token;
+
     delete userInfo._id;
-    return userInfo;
+    return { userInfo, token };
   } else {
     throw new Error(EMAIL_TAKEN);
   }
@@ -117,3 +116,22 @@ export const uploadAvatar = async (userId, path) => {
   user.avatar = path;
   await user.save();
 };
+
+// export const forgetPassword = async (email) => {
+//   nodemailer.createTestAccount((err, account) => {
+//     const transporter = nodemailer.createTransport({
+//       service: "Gmail",
+//       auth: {
+//         user: process.env.GMAIL_USER,
+//         pass: process.env.GMAIL_PASS,
+//       },
+//     });
+//     const emailOptions = {
+//       from: `"Duong Chu" <duongchulik95@gmail.com>`,
+//       to: "chu.duong.dev@gmail.com",
+//       subject: "forgetPassword",
+//       text: "Hello"
+//     }
+//   });
+
+// };

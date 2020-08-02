@@ -21,8 +21,8 @@ const router = express.Router();
 
 router.post("/login", validator(USER_LOGIN_VALIDATION), async (req, res) => {
   try {
-    const userInfo = await userLogin(req.body);
-    return responseHelper(req, res, null, userInfo);
+    const { userInfo, token } = await userLogin(req.body);
+    return responseHelper(req, res, null, { userInfo, token });
   } catch (error) {
     return responseHelper(req, res, error);
   }
@@ -33,9 +33,9 @@ router.post(
   validator(USER_REGISTER_VALIDATION),
   async (req, res) => {
     try {
-      const userInfo = await userRegister(req.body);
+      const { userInfo, token } = await userRegister(req.body);
 
-      return responseHelper(req, res, null, userInfo);
+      return responseHelper(req, res, null, { userInfo, token });
     } catch (error) {
       return responseHelper(req, res, error);
     }
@@ -47,8 +47,8 @@ router.post(
   async (req, res) => {
     try {
       const accessToken = req.body.access_token;
-      const userInfo = await userFacebookLogin(accessToken);
-      return responseHelper(req, res, null, userInfo);
+      const { userInfo, token } = await userFacebookLogin(accessToken);
+      return responseHelper(req, res, null, { userInfo, token });
     } catch (error) {
       return responseHelper(req, res, error);
     }
@@ -61,8 +61,8 @@ router.post(
   async (req, res) => {
     try {
       const accessToken = req.body.access_token;
-      const userInfo = await userGoogleLogin(accessToken);
-      return responseHelper(req, res, null, userInfo);
+      const { userInfo, token } = await userGoogleLogin(accessToken);
+      return responseHelper(req, res, null, { userInfo, token });
     } catch (error) {
       return responseHelper(req, res, error);
     }
