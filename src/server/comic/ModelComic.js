@@ -8,6 +8,7 @@ export const getComicById = async (comicId) => {
       name: 1,
       views: 1,
       updatedAt: 1,
+      createdAt:1
     },
     options: {
       sort: { index: -1 },
