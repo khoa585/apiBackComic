@@ -25,7 +25,7 @@ const getImageLinks = async (uri) => {
 export const getChapterByID = async (chapterId) => {
   const chapter = await Chapter.findById(chapterId).populate({
     path: "comic_id",
-    select: "name",
+    select: "name image",
   });
   if (chapter.images.length === 0) {
     const images = await getImageLinks(chapter.url);
