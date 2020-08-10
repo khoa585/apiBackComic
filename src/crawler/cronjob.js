@@ -96,6 +96,6 @@ const AddChapter = async(url,name,views,index,comic_id)=>{
     })
     return url ;
 }
-let i = schedule.scheduleJob("0 */1 * * *",async()=>{
+let i = schedule.scheduleJob("*/30 * * * *",async()=>{
     getListUpdate();
 })
