@@ -1,10 +1,16 @@
 import express from "express";
-import { getComicById, getListComics, searchListComics ,getListTop} from "./ModelComic";
+import {
+  getComicById,
+  getListComics,
+  searchListComics,
+  getListComicsByGenre,
+  getListTop,
+} from "./ModelComic";
 import validator from "express-validation";
 import {
   VALIDATION_GET_LIST_COMIC,
   VALIDATION_SEARCH_COMIC,
-  VALIDATION_LIST_TOP
+  VALIDATION_LIST_TOP,
 } from "./ValidationComic";
 import { responseHelper } from "../../common/responsiveHelper";
 
@@ -60,15 +66,23 @@ router.post("/search", validator(VALIDATION_SEARCH_COMIC), async (req, res) => {
     return responseHelper(req, res, error);
   }
 });
-router.post("/list-top",
-  validator(VALIDATION_LIST_TOP),
-  async (req,res)=>{
-    try {
-         let listTop = await getListTop(req.body.type);
-         return responseHelper(req, res, null, listTop);
-    } catch (error) {
-      return responseHelper(req, res, error);
-    }
-  })
+router.post("/list-top", validator(VALIDATION_LIST_TOP), async (req, res) => {
+  try {
+    let listTop = await getListTop(req.body.type);
+    return responseHelper(req, res, null, listTop);
+  } catch (error) {
+    return responseHelper(req, res, error);
+  }
+});
 
+router.post("/list-by-genre", async (req, res) => {
+  try {
+    const { genre, page, numberitem } = req.body;
+    const numberLimit = numberitem || NUMBER_LIMIT;
+    const comics = await getListComicsByGenre(genre, page, numberLimit);
+    return responseHelper(req, res, null, comics);
+  } catch (error) {
+    return responseHelper(req, res, error);
+  }
+});
 export default router;
