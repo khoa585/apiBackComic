@@ -18,7 +18,7 @@ export const getComicById = async (comicId) => {
   return comic;
 };
 
-export const getListComicsByGenre = async (genre, page, numberitem) => {
+export const getListComicsByGenres = async (genre, page, numberitem) => {
   let valueCache;
   const key = `${genre}-${page}-${numberitem}`;
   valueCache = getData(key);

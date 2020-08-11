@@ -42,4 +42,12 @@ export const VALIDATION_LIST_TOP = {
     type: Joi.number().valid([1,2,3]),
   },
 };
-
+export const VALIDATION_GET_LIST_BY_GENDERS = {
+    options: { allowUnknownBody: false },
+    body: {
+      page: Joi.number().required(),
+      numberitem: Joi.number(),
+      genders: Joi.string(),
+      status:Joi.number().valid([0,1])
+    },
+}

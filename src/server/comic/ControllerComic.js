@@ -11,6 +11,7 @@ import {
   VALIDATION_GET_LIST_COMIC,
   VALIDATION_SEARCH_COMIC,
   VALIDATION_LIST_TOP,
+  VALIDATION_GET_LIST_BY_GENDERS
 } from "./ValidationComic";
 import { responseHelper } from "../../common/responsiveHelper";
 
@@ -78,11 +79,13 @@ router.post("/list-top", validator(VALIDATION_LIST_TOP), async (req, res) => {
   }
 });
 
-router.post("/list-by-genre", async (req, res) => {
+router.post("/list-by-genres", 
+  validator(VALIDATION_GET_LIST_BY_GENDERS),
+async (req, res) => {
   try {
-    const { genre, page, numberitem } = req.body;
+    const { genres, page, numberitem } = req.body;
     const numberLimit = numberitem || NUMBER_LIMIT;
-    const comics = await getListComicsByGenre(genre, page, numberLimit);
+    const comics = await getListComicsByGenres(genres, page, numberLimit);
     return responseHelper(req, res, null, comics);
   } catch (error) {
     return responseHelper(req, res, error);
