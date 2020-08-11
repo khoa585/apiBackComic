@@ -4,8 +4,8 @@ export const COMMENT_VALIDATION = {
   options: { allowUnknownBody: false },
   body: {
     comment: Joi.string().required(),
-    chapterId: Joi.string().required(),
-    comicId: Joi.string().required(),
+    chapterId: Joi.string(),
+    comicId: Joi.string(),
     userData: Joi.object({
       name: Joi.string(),
       email: Joi.string().email({

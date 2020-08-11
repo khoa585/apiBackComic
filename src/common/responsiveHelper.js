@@ -1,12 +1,6 @@
-export const responseHelper = (
-  req,
-  res,
-  error,
-  data = null,
-  numberOfResult = null
-) => {
+export const responseHelper = (req,res,error,data = null,numberOfResult = null) => {
   if (error) {
-    return res.json({ status: error.message });
+    return res.json({ status: error });
   }
   if (numberOfResult != null && numberOfResult != undefined) {
     return res.json({

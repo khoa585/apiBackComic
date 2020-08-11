@@ -54,8 +54,7 @@ app.set("trust proxy", true);
 app.use("/", router);
 app.use(function (err, req, res, next) {
   if (err.message == "validation error") {
-    // ResponseHelper.json(req,res,err.errors,null);
-    responseHelper(
+    return responseHelper(
       req,
       res,
       {
@@ -64,7 +63,6 @@ app.use(function (err, req, res, next) {
       },
       null
     );
-    return;
   }
 });
 

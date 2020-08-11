@@ -1,15 +1,8 @@
 import express from "express";
 import validator from "express-validation";
-
 import { COMMENT_VALIDATION, REPLY_VALIDATION } from "./ValidatorComment";
 import { responseHelper } from "../../common/responsiveHelper";
-
-import {
-  createComment,
-  getCommentsByComic,
-  getCommentsByChapter,
-  createReply,
-} from "./ModelComment";
+import {createComment,getCommentsByComic,getCommentsByChapter,createReply,} from "./ModelComment";
 
 const router = express.Router();
 
@@ -18,11 +11,11 @@ router.post("/create", validator(COMMENT_VALIDATION), async (req, res) => {
   try {
     if (!req.user) {
       const { userData, comment, comicId, chapterId } = req.body;
-
       const newComment = await createComment(comment, comicId, chapterId, {
         ...userData,
         ip: req.ip,
       });
+      
       return responseHelper(req, res, null, newComment);
     } else {
       const { comment, comicId, chapterId } = req.body;
