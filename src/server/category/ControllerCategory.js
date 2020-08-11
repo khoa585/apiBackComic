@@ -1,6 +1,6 @@
 import express from 'express';
 import  validator from 'express-validation';
-import {responsHelper} from './../../common/responsiveHelper';
+import {responseHelper} from './../../common/responsiveHelper';
 import {createCategory,getListCategory} from './ModelCategory';
 import {VALIDATION_CREATE_CATEGORY} from './ValidationCategory';
 import {getData,putData} from './../../common/cache';
@@ -13,10 +13,10 @@ router.post("/create",
     async(req,res)=>{
         try {
             let resultCreate = await createCategory(req.body);
-            return responsHelper(req,res,null,resultCreate);
+            return responseHelper(req,res,null,resultCreate);
         } catch (error) {
             console.log(error);
-            return responsHelper(req,res,error);
+            return responseHelper(req,res,error);
         }
     })
 router.get("/getlist",
@@ -27,10 +27,10 @@ router.get("/getlist",
                 listCategory = await getListCategory();
                 putData("LIST-CATEGORY",listCategory);
             }
-            return responsHelper(req,res,null,listCategory);
+            return responseHelper(req,res,null,listCategory);
         } catch (error) {
             console.log(error);
-            return responsHelper(req,res,error);
+            return responseHelper(req,res,error);
         }
     })
 export default router ;
