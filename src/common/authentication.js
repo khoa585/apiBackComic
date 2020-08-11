@@ -27,14 +27,19 @@ export default authentication ;
 export const Authorization = async (req,res,next)=>{
     let token = req.headers.Authorization || req.headers.authorization;
     if(token){
-        let data = verifyToken(token);
-        if(!data || !data._id){
-            next();
+        try {
+            let data = verifyToken(token);
+            if(!data || !data._id){
+                next();
+            }
+            let userInfo = await getUserInfoById(data._id);
+            if(userInfo){
+                req.user = userInfo ;
+            }
+        } catch (error) {
+            
         }
-        let userInfo = await getUserInfoById(data._id);
-        if(userInfo){
-            req.user = userInfo ;
-        }
+        
     }
     next();
 }

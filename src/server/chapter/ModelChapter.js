@@ -3,6 +3,7 @@ import cheerio from "cheerio";
 const Chapter = require("../../model/chapter");
 import { getData, putData } from "../../common/cache";
 import { getDataRedis, setDataRedis } from "./../../common/redis";
+import chapter from "../../model/chapter";
 const getImageLinks = async (uri) => {
   try {
     const response = await request.get(uri);
@@ -78,3 +79,6 @@ const setDataToTop = async (key, comicId) => {
   }
   await setDataRedis(key, JSON.stringify(dataGet));
 };
+export const getInfoChapterById = (id)=>{
+    return chapter.findById(id);
+}

@@ -21,9 +21,11 @@ const router = express.Router();
 
 router.post("/login", validator(USER_LOGIN_VALIDATION), async (req, res) => {
   try {
+    
     const { userInfo, token } = await userLogin(req.body);
     return responseHelper(req, res, null, { userInfo, token });
   } catch (error) {
+    console.log(error);
     return responseHelper(req, res, error);
   }
 });

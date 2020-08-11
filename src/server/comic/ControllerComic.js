@@ -20,6 +20,9 @@ router.get("/detail/:comicId", async (req, res) => {
   try {
     const { comicId } = req.params;
     const comic = await getComicById(comicId);
+    if(!comic){
+        throw "COMIC_NOT_FOUND";
+    }
     return responseHelper(req, res, null, comic);
   } catch (error) {
     return responseHelper(req, res, error);

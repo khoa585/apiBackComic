@@ -85,3 +85,21 @@ export const createReply = async (replyText, commentId, userData) => {
   comment.replies.push(newReply);
   await comment.save();
 };
+export const getListCommentNews = (page,numberitem)=>{
+    return Comment.find()
+    .populate({
+        path:"comic",
+        select:["name", "last_name", "email", "avatar"]
+    })
+    .populate({
+      path: "chapter", select: ["name","_id"] 
+    })
+    .populate({
+      path: "creator.user",
+      select: ["first_name", "last_name", "_id", "avatar"],
+    })
+    .select("-creator.client.ip -replies")
+    .sort({createdAt:-1})
+    .skip((page-1)*numberitem)
+    .limit(numberitem);
+}

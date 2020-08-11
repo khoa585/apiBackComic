@@ -5,7 +5,12 @@ require("dotenv").config();
 const secretKey = process.env.SECRET_KEY || "1321nduadnkwdnwwadwdw";
 
 export const verifyToken = (token) => {
-  const result = jwt.verify(token, secretKey);
+  let result ;
+  try {
+     result = jwt.verify(token, secretKey);
+  } catch (error) {
+
+  }
   if (!result) throw new Error(ERROR_AUTHEN);
   return result;
 };

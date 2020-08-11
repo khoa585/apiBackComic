@@ -1,16 +1,33 @@
 import express from "express";
 import validator from "express-validation";
-import { COMMENT_VALIDATION, REPLY_VALIDATION } from "./ValidatorComment";
+import { COMMENT_VALIDATION, REPLY_VALIDATION ,LIST_NEW_COMMENT } from "./ValidatorComment";
 import { responseHelper } from "../../common/responsiveHelper";
-import {createComment,getCommentsByComic,getCommentsByChapter,createReply,} from "./ModelComment";
-
+import {createComment,getCommentsByComic,getCommentsByChapter,createReply,getListCommentNews} from "./ModelComment";
+import {getInfoChapterById} from './../chapter/ModelChapter';
+import {getComicById} from './../comic/ModelComic';
+const NUMBER_LIMIT =10 ;
 const router = express.Router();
 
 //Tao comment
 router.post("/create", validator(COMMENT_VALIDATION), async (req, res) => {
   try {
+    let { userData, comment, comicId, chapterId } = req.body;
+    let comicInfo , chapterInfo ;
+    if(chapterId) {
+      chapterInfo = await getInfoChapterById(chapterId);
+      if(chapterInfo){
+        comicId = chapterInfo.comic_id ;
+      }
+    }
+    else {
+      if(comicId){
+        comicInfo = await getComicById(comicId);
+      }
+    }
+    if( !(comicInfo || chapterInfo)) {
+      throw "COMIC_OR_CHAPTER_NOT_FOUND"
+    }
     if (!req.user) {
-      const { userData, comment, comicId, chapterId } = req.body;
       const newComment = await createComment(comment, comicId, chapterId, {
         ...userData,
         ip: req.ip,
@@ -18,7 +35,6 @@ router.post("/create", validator(COMMENT_VALIDATION), async (req, res) => {
       
       return responseHelper(req, res, null, newComment);
     } else {
-      const { comment, comicId, chapterId } = req.body;
       const userId = req.user._id;
       const newComment = await createComment(comment, comicId, chapterId, {
         id: userId,
@@ -72,5 +88,19 @@ router.post("/reply/create", validator(REPLY_VALIDATION), async (req, res) => {
     return responseHelper(req, res, error);
   }
 });
+// LIST NEW COMMENT 
+router.post("/list-new",
+    validator(LIST_NEW_COMMENT),
+    async(req, res)=>{
+        try {
+            let {page,numberitem}=req.body;
+            let numberItem = numberitem || NUMBER_LIMIT ;
+            let listComment = await getListCommentNews(page,numberItem);
+            return responseHelper(req, res, null,listComment);
+        } catch (error) {
+            console.log(error);
+            return responseHelper(req, res, error);
+        }
+    })
 
 export default router;

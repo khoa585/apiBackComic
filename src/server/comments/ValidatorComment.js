@@ -30,3 +30,10 @@ export const REPLY_VALIDATION = {
     }),
   },
 };
+export const LIST_NEW_COMMENT = {
+  options: { allowUnknownBody: false },
+  body: {
+      page:Joi.number().required(),
+      numberitem:Joi.number()
+  }
+}
