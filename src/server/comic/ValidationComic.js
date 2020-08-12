@@ -47,7 +47,7 @@ export const VALIDATION_GET_LIST_BY_GENDERS = {
     body: {
       page: Joi.number().required(),
       numberitem: Joi.number(),
-      genders: Joi.string(),
+      genres: Joi.string(),
       status:Joi.number().valid([0,1])
     },
 }

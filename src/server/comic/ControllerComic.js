@@ -3,7 +3,7 @@ import {
   getComicById,
   getListComics,
   searchListComics,
-  getListComicsByGenre,
+  getListComicsByGenres,
   getListTop,
 } from "./ModelComic";
 import validator from "express-validation";
@@ -83,11 +83,12 @@ router.post("/list-by-genres",
   validator(VALIDATION_GET_LIST_BY_GENDERS),
 async (req, res) => {
   try {
-    const { genres, page, numberitem } = req.body;
+    let { genres, page, numberitem } = req.body;
     const numberLimit = numberitem || NUMBER_LIMIT;
     const comics = await getListComicsByGenres(genres, page, numberLimit);
     return responseHelper(req, res, null, comics);
   } catch (error) {
+    console.log(error);
     return responseHelper(req, res, error);
   }
 });

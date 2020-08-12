@@ -18,15 +18,16 @@ export const getComicById = async (comicId) => {
   return comic;
 };
 
-export const getListComicsByGenres = async (genre, page, numberitem) => {
+export const getListComicsByGenres = async (genres, page, numberitem) => {
   let valueCache;
-  const key = `${genre}-${page}-${numberitem}`;
+  const key = `${genres}-${page}-${numberitem}`;
   valueCache = getData(key);
   if (valueCache) {
     return valueCache;
   } else {
-    valueCache = await ComicDb.find({ genres: genre })
-      .sort({ views: -1 })
+    valueCache = await ComicDb
+      .find({ genres: { $regex:genres,$options:"i"}})
+      .sort({ updatedAt: -1 })
       .skip((page - 1) * numberitem)
       .limit(numberitem)
       .populate({
