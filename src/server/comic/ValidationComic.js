@@ -48,6 +48,6 @@ export const VALIDATION_GET_LIST_BY_GENDERS = {
       page: Joi.number().required(),
       numberitem: Joi.number(),
       genres: Joi.string(),
-      status:Joi.number().valid([0,1])
+      status:Joi.number().valid([0,1,2])
     },
 }
