@@ -34,7 +34,7 @@ export const getListComicsByGenres = async (genres, page, numberitem) => {
         path: "chapters",
         select: ["name", "updatedAt", "views", "createdAt"],
       });
-    let data = comics.map((item) => {
+    comics = comics.map((item) => {
       item.chapters = item.chapters.reverse().slice(0, 3);
       return item;
     });
@@ -46,7 +46,6 @@ export const getListComicsByGenres = async (genres, page, numberitem) => {
     };
   }
 };
-
 export const getListComics = async (type, page, numberItem) => {
   let result;
 
