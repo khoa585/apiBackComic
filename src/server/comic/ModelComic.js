@@ -25,7 +25,7 @@ export const getListComicsByGenres = async (genres, page, numberitem) => {
   if (valueCache) {
     return valueCache;
   } else {
-    valueCache = await ComicDb
+    let comics = await ComicDb
       .find({ genres: { $regex:genres,$options:"i"}})
       .sort({ updatedAt: -1 })
       .skip((page - 1) * numberitem)
@@ -34,12 +34,16 @@ export const getListComicsByGenres = async (genres, page, numberitem) => {
         path: "chapters",
         select: ["name", "updatedAt", "views", "createdAt"],
       });
-    let data = valueCache.map((item) => {
+    let data = comics.map((item) => {
       item.chapters = item.chapters.reverse().slice(0, 3);
       return item;
     });
-    putData(key, data);
-    return data;
+    let numberItem = await ComicDb.countDocuments({ genres: { $regex:genres,$options:"i"}});
+    putData(key, {comics,numberItem});
+    return {
+      comics,
+      numberItem
+    };
   }
 };
 

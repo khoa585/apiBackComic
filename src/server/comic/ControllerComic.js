@@ -85,8 +85,8 @@ async (req, res) => {
   try {
     let { genres, page, numberitem } = req.body;
     const numberLimit = numberitem || NUMBER_LIMIT;
-    const comics = await getListComicsByGenres(genres, page, numberLimit);
-    return responseHelper(req, res, null, comics);
+    const {comics,numberItem} = await getListComicsByGenres(genres, page, numberLimit);
+    return responseHelper(req, res, null, comics,numberItem);
   } catch (error) {
     console.log(error);
     return responseHelper(req, res, error);
