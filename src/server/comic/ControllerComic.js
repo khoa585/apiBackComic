@@ -83,9 +83,9 @@ router.post("/list-by-genres",
   validator(VALIDATION_GET_LIST_BY_GENDERS),
 async (req, res) => {
   try {
-    let { genres, page, numberitem } = req.body;
+    let { genres, page, numberitem ,status} = req.body;
     const numberLimit = numberitem || NUMBER_LIMIT;
-    const {comics,numberItem} = await getListComicsByGenres(genres, page, numberLimit);
+    const {comics,numberItem} = await getListComicsByGenres(genres, page, numberLimit,status);
     return responseHelper(req, res, null, comics,numberItem);
   } catch (error) {
     console.log(error);

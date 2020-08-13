@@ -18,15 +18,22 @@ export const getComicById = async (comicId) => {
   return comic;
 };
 
-export const getListComicsByGenres = async (genres, page, numberitem) => {
+export const getListComicsByGenres = async (genres, page, numberitem,status) => {
   let valueCache;
-  const key = `${genres}-${page}-${numberitem}`;
+  const key = `${genres}-${page}-${numberitem}-${status}`;
   valueCache = getData(key);
   if (valueCache) {
     return valueCache;
   } else {
+    let query = {}
+    if(genres){
+      query.genres = { $regex:genres,$options:"i"}
+    }
+    if(status!=2 && status != undefined){
+      query.status=status;
+    }
     let comics = await ComicDb
-      .find({ genres: { $regex:genres,$options:"i"}})
+      .find(query)
       .sort({ updatedAt: -1 })
       .skip((page - 1) * numberitem)
       .limit(numberitem)
@@ -38,7 +45,7 @@ export const getListComicsByGenres = async (genres, page, numberitem) => {
       item.chapters = item.chapters.reverse().slice(0, 3);
       return item;
     });
-    let numberItem = await ComicDb.countDocuments({ genres: { $regex:genres,$options:"i"}});
+    let numberItem = await ComicDb.countDocuments(query);
     putData(key, {comics,numberItem});
     return {
       comics,
