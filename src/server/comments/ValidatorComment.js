@@ -45,3 +45,11 @@ export const GET_LIST_COMMENT_COMIC = {
         numberitem:Joi.number()
     }
 }
+export const GET_LIST_COMMENT_CHAPTER = {
+  options: { allowUnknownBody: false },
+  body: {
+      chapterId:Joi.string().required(),
+      page:Joi.number().required(),
+      numberitem:Joi.number()
+  }
+}

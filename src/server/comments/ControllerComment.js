@@ -1,6 +1,6 @@
 import express from "express";
 import validator from "express-validation";
-import { COMMENT_VALIDATION, REPLY_VALIDATION ,LIST_NEW_COMMENT ,GET_LIST_COMMENT_COMIC} from "./ValidatorComment";
+import { COMMENT_VALIDATION, REPLY_VALIDATION ,LIST_NEW_COMMENT ,GET_LIST_COMMENT_COMIC ,GET_LIST_COMMENT_CHAPTER} from "./ValidatorComment";
 import { responseHelper } from "../../common/responsiveHelper";
 import {createComment,getCommentsByComic,getCommentsByChapter,createReply,getListCommentNews} from "./ModelComment";
 import {getInfoChapterById} from './../chapter/ModelChapter';
@@ -61,11 +61,13 @@ router.post("/comic",
 });
 
 //GET COMMENTS BY CREATOR_ID
-router.post("/chapter", async (req, res) => {
+router.post("/chapter",
+  validator(GET_LIST_COMMENT_CHAPTER),
+ async (req, res) => {
   try {
-    const { chapterId } = req.body;
-    const comments = await getCommentsByChapter(chapterId);
-    return responseHelper(req, res, null, comments);
+    const { chapterId ,page,numberitem} = req.body;
+    const {comments,numberComic} = await getCommentsByChapter(chapterId,page,numberitem);
+    return responseHelper(req, res, null, comments,numberComic);
   } catch (error) {
     return responseHelper(req, res, error);
   }

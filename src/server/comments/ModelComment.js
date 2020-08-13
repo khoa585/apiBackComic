@@ -53,7 +53,8 @@ export const getCommentsByComic = async (comicId,page,numberItem) => {
     ;
 };
 
-export const getCommentsByChapter = async (chapterId) => {
+export const getCommentsByChapter = async (chapterId,page,numberitem) => {
+  let numberItem = numberitem || NUMBER_LIMIT ;
   const comments = await Comment.find({ chapter: chapterId })
     .populate({
       path: "creator.user",
@@ -63,9 +64,15 @@ export const getCommentsByChapter = async (chapterId) => {
       path: "replies.creator.user",
       select: ["first_name", "last_name", "email", "avatar"],
     })
-    .populate({ path: "chapter", select: "name" });
-
-  return comments;
+    .populate({ path: "chapter", select: "name" })
+    .sort({createdAt:-1})
+    .skip((page-1)*numberItem)
+    .limit(numberItem);
+    const numberComic = await Comment.countDocuments({ chapter: chapterId });
+  return {
+    comments,
+    numberComic
+  };
 };
 
 export const createReply = async (replyText, commentId, userData) => {
