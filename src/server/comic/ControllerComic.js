@@ -11,7 +11,7 @@ import {
   VALIDATION_GET_LIST_COMIC,
   VALIDATION_SEARCH_COMIC,
   VALIDATION_LIST_TOP,
-  VALIDATION_GET_LIST_BY_GENDERS
+  VALIDATION_GET_LIST_BY_GENDERS,
 } from "./ValidationComic";
 import { responseHelper } from "../../common/responsiveHelper";
 

@@ -37,3 +37,11 @@ export const LIST_NEW_COMMENT = {
       numberitem:Joi.number()
   }
 }
+export const GET_LIST_COMMENT_COMIC = {
+    options: { allowUnknownBody: false },
+    body: {
+        comicId:Joi.string().required(),
+        page:Joi.number().required(),
+        numberitem:Joi.number()
+    }
+}

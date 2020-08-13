@@ -1,6 +1,6 @@
 const Comment = require("../../model/comment");
 const User = require("../../model/user");
-
+const NUMBER_LIMIT =10 ;
 export const createComment = async (comment, comicId, chapterId, userData) => {
   let newComment;
   if (!userData.id) {
@@ -30,7 +30,8 @@ export const createComment = async (comment, comicId, chapterId, userData) => {
   return newComment;
 };
 
-export const getCommentsByComic = async (comicId) => {
+export const getCommentsByComic = async (comicId,page,numberItem) => {
+  numberItem = numberItem || NUMBER_LIMIT ;
   const comments = await Comment.find({ comic: comicId })
     .populate({
       path: "creator.user",
@@ -40,9 +41,16 @@ export const getCommentsByComic = async (comicId) => {
       path: "replies.creator.user",
       select: ["first_name", "last_name", "email", "avatar"],
     })
-    .populate({ path: "chapter", select: "name" });
-
-  return comments;
+    .populate({ path: "chapter", select: "name" })
+    .sort({createdAt:-1})
+    .skip((page-1)*numberItem)
+    .limit(numberItem);
+  const numberComic = await Comment.countDocuments({ comic: comicId });
+  return {
+    comments,
+    numberComic
+  }
+    ;
 };
 
 export const getCommentsByChapter = async (chapterId) => {
